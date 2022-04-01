@@ -60,7 +60,7 @@ jobs:
         with:
           push: true
           tags: ${{ env.DOCKERHUB_TAG }}:${{ steps.tag_suffix.outputs.suffix }}
-          platforms: linux/arm64 # linux/amd64,linux/arm/v7,
+          platforms: linux/arm64,linux/amd64 #,linux/arm/v7,
           cache-from: type=registry,ref={{ env.DOCKERHUB_TAG }}:${{ steps.tag_suffix.outputs.suffix }}${{ steps.cache_buster.outputs.suffix }}
           cache-to: type=inline
 
