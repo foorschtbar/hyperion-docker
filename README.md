@@ -27,6 +27,7 @@ services:
   hyperion:
     image: foorschtbar/hyperion
     container_name: hyperion
+    # privileged: true # for PWM
     ports:
       - 8090:8090
       - 8091:8091
@@ -36,5 +37,6 @@ services:
       - ./config/:/root/.hyperion
     devices:
       - /dev/video0:/dev/video0
+    # - /dev/spidev0.0:/dev/spidev0.0 # for SPI
     restart: unless-stopped
 ```
