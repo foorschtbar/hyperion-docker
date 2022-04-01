@@ -24,7 +24,7 @@ RUN set -eux; \
 
 # Install latest Hypersion
 RUN set -eux; \
-    wget -qO- https://apt.hyperion-project.org/hyperion.pub.key | gpg --dearmor -o /usr/share/keyrings/hyperion.pub.gpg;\
+    wget --no-check-certificate -qO- https://apt.hyperion-project.org/hyperion.pub.key | gpg --dearmor -o /usr/share/keyrings/hyperion.pub.gpg;\
     echo "deb [signed-by=/usr/share/keyrings/hyperion.pub.gpg] https://apt.hyperion-project.org/ $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/hyperion.list;\
     apt-get update ; \
     apt-get install -y hyperion; \
