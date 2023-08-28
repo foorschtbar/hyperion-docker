@@ -5,7 +5,7 @@
   ![](https://img.shields.io/docker/pulls/foorschtbar/hyperion?style=plastic)
   ![](https://img.shields.io/docker/stars/foorschtbar/hyperion?style=plastic)
   ![](https://img.shields.io/docker/image-size/foorschtbar/hyperion?style=plastic)
-  ![](https://img.shields.io/github/workflow/status/foorschtbar/hyperion-docker/CI%20Workflow?style=plastic)
+  ![](https://img.shields.io/github/actions/workflow/status/foorschtbar/hyperion-docker/build.yml?branch=master&style=plastic)
 ](https://hub.docker.com/repository/docker/foorschtbar/hyperion)
 [
   ![](https://img.shields.io/github/last-commit/foorschtbar/hyperion-docker?style=plastic)
@@ -21,8 +21,6 @@ Multi-Arch/Multi-Platform Docker Container for [hyperion.ng](https://github.com/
 Example docker-compose configuration:
 
 ```yml
-version: "3.0"
-
 services:
   hyperion:
     image: foorschtbar/hyperion
