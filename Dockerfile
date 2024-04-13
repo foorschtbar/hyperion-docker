@@ -17,7 +17,8 @@ RUN set -eux; \
     libusb-1.0-0  \
     libexpat-dev  \
     libgl-dev  \
-    libfreetype6; \
+    libfreetype6 \
+    libpython3.10; \
     apt-get clean -q -y ; \
     apt-get autoremove -y ; \
     rm -rf /var/lib/apt/lists/*
