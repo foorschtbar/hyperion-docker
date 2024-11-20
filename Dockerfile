@@ -1,4 +1,6 @@
-FROM ubuntu:noble
+# ubuntu:jammy is LTS and will be supported until 2027/04
+FROM ubuntu:jammy 
+ARG RELEASE_TYPE=STABLE
 
 # Install dependencies
 RUN set -eux; \
@@ -10,6 +12,7 @@ RUN set -eux; \
     dirmngr \
     libgnutls30 \
     lsb-release \
+    apt-transport-https \
     ca-certificates \
     libqt5sql5-sqlite \
     openssl  \
@@ -24,14 +27,8 @@ RUN set -eux; \
     rm -rf /var/lib/apt/lists/*
 
 # Install latest Hyperion
-RUN set -eux; \
-    wget --no-check-certificate -qO- https://apt.hyperion-project.org/hyperion.pub.key | gpg --dearmor -o /usr/share/keyrings/hyperion.pub.gpg;\
-    echo "deb [signed-by=/usr/share/keyrings/hyperion.pub.gpg] https://apt.hyperion-project.org/ $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/hyperion.list;\
-    apt-get update ; \
-    apt-get install -y hyperion; \
-    apt-get clean -q -y ; \
-    apt-get autoremove -y ; \
-    rm -rf /var/lib/apt/lists/*
+COPY install.sh .
+RUN chmod +x install.sh && ./install.sh && rm install.sh
 
 EXPOSE 8090 8091 19444 19445 
 

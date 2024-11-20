@@ -15,6 +15,11 @@ jobs:
   main:
     name: Build & Push Docker Images
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        release_type: [ 'stable', 'nightly' ]
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -37,37 +42,55 @@ jobs:
           if [ '${{ github.event_name }}' == 'schedule' ]
           then
             echo "Scheduled run. Disable cache."
-            echo "::set-output name=suffix::-no-cache"
+            echo "suffix=-no-cache" >> $GITHUB_OUTPUT
           else
             echo "Non-scheduled run. Enable cache."
-            echo "::set-output name=suffix::"
+            echo "suffix=" >> $GITHUB_OUTPUT
           fi
 
       - name: Get branche name
         uses: nelonoel/branch-name@v1.0.1
 
-      - name: tag suffix
-        id: tag_suffix
+      - name: Set Docker Tags
+        id: docker_tags
         run: |
+          TAG=""
+
+          # Add tag develop if needed
           if [ ${BRANCH_NAME} == 'develop' ]
           then
-            echo "::set-output name=suffix::develop"
+            TAG=(${{ env.DOCKERHUB_TAG }}:develop)
           else
-            echo "::set-output name=suffix::latest"
+            # Tag with "nightly"
+            if [ '${{ matrix.release_type }}' == 'nightly' ]
+            then
+              TAG=(${{ env.DOCKERHUB_TAG }}:nightly)
+            else
+              TAG=(${{ env.DOCKERHUB_TAG }}:latest)
+            fi
           fi
 
+          echo "Image tag: $TAG"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
       - name: Build and push
-        uses: docker/build-push-action@v2
+        id: docker_build
+        uses: docker/build-push-action@v5
         with:
+          build-args: |
+            RELEASE_TYPE=${{ matrix.release_type }}
           push: true
-          tags: ${{ env.DOCKERHUB_TAG }}:${{ steps.tag_suffix.outputs.suffix }}
-          platforms: linux/arm64,linux/amd64,linux/arm/v7
-          cache-from: type=registry,ref={{ env.DOCKERHUB_TAG }}:${{ steps.tag_suffix.outputs.suffix }}${{ steps.cache_buster.outputs.suffix }}
+          tags: ${{ steps.docker_tags.outputs.tag }}
+          platforms: linux/amd64,linux/arm/v7,linux/arm64
+          cache-from: type=registry,ref=${{ steps.docker_tags.outputs.tag }}${{ steps.cache_buster.outputs.suffix }}
           cache-to: type=inline
 
       - name: Image digests
         run: |
-          echo image digest: ${{ steps.docker_build.outputs.digest }}
+          echo Release type: ${{ matrix.release_type }}; \
+          echo Image Tag: ${{ steps.docker_tags.outputs.tag }}; \
+          echo Branche: ${BRANCH_NAME}; \
+          echo Digests: ${{ steps.docker_build.outputs.digest }}
 
   pushreadme:
     runs-on: ubuntu-latest
