@@ -1,4 +1,4 @@
-FROM ubuntu:jammy
+FROM ubuntu:noble
 
 # Install dependencies
 RUN set -eux; \
@@ -23,7 +23,7 @@ RUN set -eux; \
     apt-get autoremove -y ; \
     rm -rf /var/lib/apt/lists/*
 
-# Install latest Hypersion
+# Install latest Hyperion
 RUN set -eux; \
     wget --no-check-certificate -qO- https://apt.hyperion-project.org/hyperion.pub.key | gpg --dearmor -o /usr/share/keyrings/hyperion.pub.gpg;\
     echo "deb [signed-by=/usr/share/keyrings/hyperion.pub.gpg] https://apt.hyperion-project.org/ $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/hyperion.list;\
