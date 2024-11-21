@@ -2,6 +2,9 @@
 FROM ubuntu:jammy 
 ARG RELEASE_TYPE=STABLE
 
+# Preventing debconf errors
+ENV DEBIAN_FRONTEND=noninteractive
+
 # Install dependencies
 RUN set -eux; \
     apt-get update ; \
@@ -18,7 +21,7 @@ RUN set -eux; \
     openssl  \
     libx11-6 \
     libusb-1.0-0  \
-    libftdi1 \
+    libftdi1-2 \
     libexpat-dev  \
     libgl-dev  \
     libfreetype6 \
