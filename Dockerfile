@@ -18,6 +18,7 @@ RUN set -eux; \
     openssl  \
     libx11-6 \
     libusb-1.0-0  \
+    libftdi1 \
     libexpat-dev  \
     libgl-dev  \
     libfreetype6 \
