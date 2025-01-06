@@ -28,7 +28,8 @@ services:
     # privileged: true # for PWM
     ports:
       - 8090:8090
-      - 8091:8091
+      - 8092:8092
+      - 19400:19400
       - 19444:19444
       - 19445:19445
     volumes:

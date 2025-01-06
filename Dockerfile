@@ -6,6 +6,7 @@ ARG RELEASE_TYPE=STABLE
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install dependencies
+# Checkout https://github.com/hyperion-project/hyperion.docker-ci/blob/master/ubuntu_debian for changes
 RUN set -eux; \
     apt-get update ; \
     apt-get upgrade -y ; \
@@ -34,6 +35,6 @@ RUN set -eux; \
 COPY install.sh .
 RUN chmod +x install.sh && ./install.sh && rm install.sh
 
-EXPOSE 8090 8091 19444 19445 
+EXPOSE 8090 8092 19400 19444 19445 
 
 ENTRYPOINT "/usr/bin/hyperiond"
