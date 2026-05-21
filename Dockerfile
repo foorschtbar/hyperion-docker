@@ -5,6 +5,10 @@ ARG RELEASE_TYPE=STABLE
 # Preventing debconf errors
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Install apt-transport-https to allow adding repositories over https
+# Sometimes, apt-get updated failed with "returned a non-zero code: 100"
+RUN apt-get update && apt-get install -y apt-transport-https
+
 # Install dependencies
 # Checkout https://github.com/hyperion-project/hyperion.docker-ci/blob/master/ubuntu_debian for changes
 RUN set -eux; \
@@ -16,7 +20,6 @@ RUN set -eux; \
     dirmngr \
     libgnutls30 \
     lsb-release \
-    apt-transport-https \
     ca-certificates \
     libqt5sql5-sqlite \
     openssl  \
