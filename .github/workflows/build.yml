@@ -8,7 +8,7 @@ env:
 on:
   push:
   schedule:
-    - cron: "0 5 * * 5"
+    - cron: "0 5 * * *"
   workflow_dispatch:
 
 jobs:
@@ -24,19 +24,36 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Decide whether this matrix entry should run
+        id: should_run
+        run: |
+          if [ "${{ github.event_name }}" != "schedule" ]; then
+            echo "run=true" >> $GITHUB_OUTPUT
+          elif [ "${{ matrix.release_type }}" = "nightly" ]; then
+            echo "run=true" >> $GITHUB_OUTPUT
+          elif [ "$(date -u +%u)" = "5" ]; then
+            echo "run=true" >> $GITHUB_OUTPUT
+          else
+            echo "run=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Set up QEMU
+        if: steps.should_run.outputs.run == 'true'
         uses: docker/setup-qemu-action@v1
 
       - name: Set up Docker Buildx
+        if: steps.should_run.outputs.run == 'true'
         uses: docker/setup-buildx-action@v1
 
       - name: Login to Docker Hub
+        if: steps.should_run.outputs.run == 'true'
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
       - name: Set cache buster
+        if: steps.should_run.outputs.run == 'true'
         id: cache_buster
         run: |
           if [ '${{ github.event_name }}' == 'schedule' ]
@@ -49,15 +66,17 @@ jobs:
           fi
 
       - name: Get branche name
+        if: steps.should_run.outputs.run == 'true'
         uses: nelonoel/branch-name@v1.0.1
 
       - name: Set Docker Tags
+        if: steps.should_run.outputs.run == 'true'
         id: docker_tags
         run: |
           TAG=""
 
           # Add tag develop if needed
-          if [ ${BRANCH_NAME} == 'develop' ]
+          if [ "${BRANCH_NAME}" == 'develop' ]
           then
             TAG=(${{ env.DOCKERHUB_TAG }}:develop)
           else
@@ -74,6 +93,7 @@ jobs:
           echo "tag=$TAG" >> $GITHUB_OUTPUT
 
       - name: Build and push
+        if: steps.should_run.outputs.run == 'true'
         id: docker_build
         uses: docker/build-push-action@v5
         with:
@@ -86,6 +106,7 @@ jobs:
           cache-to: type=inline
 
       - name: Image digests
+        if: steps.should_run.outputs.run == 'true'
         run: |
           echo Release type: ${{ matrix.release_type }}; \
           echo Image Tag: ${{ steps.docker_tags.outputs.tag }}; \
