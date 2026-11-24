@@ -30,6 +30,7 @@ RUN set -eux; \
     libgl-dev  \
     libfreetype6 \
     libpython3.10; \
+    libpipewire-0.3-0; \
     apt-get clean -q -y ; \
     apt-get autoremove -y ; \
     rm -rf /var/lib/apt/lists/*
