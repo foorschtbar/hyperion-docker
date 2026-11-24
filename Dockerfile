@@ -29,7 +29,7 @@ RUN set -eux; \
     libexpat-dev  \
     libgl-dev  \
     libfreetype6 \
-    libpython3.10; \
+    libpython3.10 \
     libpipewire-0.3-0; \
     apt-get clean -q -y ; \
     apt-get autoremove -y ; \
